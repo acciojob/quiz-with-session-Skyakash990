@@ -57,9 +57,9 @@ function renderQuestions() {
             choiceElement.setAttribute("value", choice);
 
 			
-			if (progress[i] && progress[i] === choice) {
-                choiceElement.checked = true;
-            }
+			if (progress[i] === choice) {
+			    choiceElement.setAttribute("checked", "true");
+			}
 			
 			choiceElement.addEventListener("change",()=>{
 				saveProgress(i,choice);
@@ -81,11 +81,11 @@ function calculateScore(){
 	let score=0;
 	let progress = JSON.parse(sessionStorage.getItem("progress")) || {};
 
-	for(let i=0;i<questions.length;i++){
-		if(progress[i] === questions[i].answer){
-			score++;
-		}
-	}
+	questions.forEach((question, i) => {
+    if (progress[i] === question.answer) {
+      score++;
+    }
+  });
 	localStorage.setItem("score",score);
 	document.getElementById("score").innerHTML=`<span>Your score is ${score} out of 5.</span>`;
 	sessionStorage.removeItem("progress");
