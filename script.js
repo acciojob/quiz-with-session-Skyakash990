@@ -82,18 +82,20 @@ function calculateScore(){
 	let progress = JSON.parse(sessionStorage.getItem("progress")) || {};
 
 	for(let i=0;i<questions.length;i++){
-		if(progress[i] === questions.answer){
+		if(progress[i] === questions[i].answer){
 			score++;
 		}
 	}
-	document.getElementById("score").innerText=`Your score is ${score} out of 5.`;
 	localStorage.setItem("score",score);
+	document.getElementById("score").innerText=`Your score is ${score} out of 5.`;
+	sessionStorage.removeItem("progress");
 }
 
-document.getElementById("submit").addEventListener("click",calculateScore());
-
-// Call the function to display the questions
+let btn=document.getElementById("submit");
+btn.addEventListener("click",calculateScore);
 renderQuestions();
+
+
 
 
 
