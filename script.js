@@ -30,27 +30,70 @@ const questions = [
   },
 ];
 
+function saveProgress(questionIndex,selectedValue){
+	let progress=JSON.parse(sessionStorage.getItem("progress")) || {};
+	progress[questionIndex]=selectedValue;
+	sessionStorage.setItem("progress",JSON.stringify(progress));
+}
+
 // Display the quiz questions and choices
 function renderQuestions() {
-  for (let i = 0; i < questions.length; i++) {
-    const question = questions[i];
-    const questionElement = document.createElement("div");
-    const questionText = document.createTextNode(question.question);
-    questionElement.appendChild(questionText);
-    for (let j = 0; j < question.choices.length; j++) {
-      const choice = question.choices[j];
-      const choiceElement = document.createElement("input");
-      choiceElement.setAttribute("type", "radio");
-      choiceElement.setAttribute("name", `question-${i}`);
-      choiceElement.setAttribute("value", choice);
-      if (userAnswers[i] === choice) {
-        choiceElement.setAttribute("checked", true);
-      }
-      const choiceText = document.createTextNode(choice);
-      questionElement.appendChild(choiceElement);
-      questionElement.appendChild(choiceText);
+    const questionDiv = document.querySelector("#questions");
+    questionDiv.innerHTML = ""; // Clear previous content
+
+	let progress = JSON.parse(sessionStorage.getItem("progress"))|| {};
+	
+    for (let i = 0; i < questions.length; i++) {
+        const question = questions[i];
+        const questionElement = document.createElement("div");
+        questionElement.innerHTML = `<p>${question.question}</p>`;
+
+        for (let j = 0; j < question.choices.length; j++) {
+            const choice = questions[i].choices[j];
+
+            const choiceElement = document.createElement("input");
+            choiceElement.setAttribute("type", "radio");
+            choiceElement.setAttribute("name", `question-${i}`);
+            choiceElement.setAttribute("value", choice);
+
+			
+			if (progress[i] && progress[i] === choice) {
+                choiceElement.checked = true;
+            }
+			
+			choiceElement.addEventListener("change",()=>{
+				saveProgress(i,choice);
+			})
+			
+            const choiceLabel = document.createElement("label");
+            choiceLabel.appendChild(choiceElement);
+            choiceLabel.appendChild(document.createTextNode(choice));
+
+            questionElement.appendChild(choiceLabel);
+            questionElement.appendChild(document.createElement("br"));
+        }
+
+        questionDiv.appendChild(questionElement);
     }
-    questionsElement.appendChild(questionElement);
-  }
 }
+
+function calculateScore(){
+	let score=0;
+	let progress = JSON.parse(sessionStorage.getItem("progress")) || {};
+
+	for(let i=0;i<questions.length;i++){
+		if(progress[i] === questions.answer){
+			score++;
+		}
+	}
+	document.getElementById("score").innerText=`Your score is ${score} out of 5.`;
+	localStorage.setItem("score",score);
+}
+
+document.getElementById("submit").addEventListener("click",calculateScore());
+
+// Call the function to display the questions
 renderQuestions();
+
+
+
