@@ -87,7 +87,7 @@ function calculateScore(){
 		}
 	}
 	localStorage.setItem("score",score);
-	document.getElementById("score").innerText=`Your score is ${score} out of 5.`;
+	document.getElementById("score").innerHTML=`<span>Your score is ${score} out of 5.</span>`;
 	sessionStorage.removeItem("progress");
 }
 
